@@ -57,6 +57,10 @@
                             Margin="0,0,0,10" Click="ProcessesBtn_Click" Tag="processes"/>
                     <Button x:Name="NetworkBtn" Content="Network" Style="{StaticResource ModernNavButtonStyle}" 
                             Margin="0,0,0,10" Click="NetworkBtn_Click" Tag="network"/>
+                    <Button x:Name="SecurityBtn" Content="Security" Style="{StaticResource ModernNavButtonStyle}" 
+                            Margin="0,0,0,10" Click="SecurityBtn_Click" Tag="security"/>
+                    <Button x:Name="HealthBtn" Content="Health Check" Style="{StaticResource ModernNavButtonStyle}" 
+                            Margin="0,0,0,10" Click="HealthBtn_Click" Tag="health"/>
                     <Button x:Name="OptimizeBtn" Content="Optimize" Style="{StaticResource ModernNavButtonStyle}" 
                             Margin="0,0,0,10" Click="OptimizeBtn_Click" Tag="optimize"/>
                     <Button x:Name="ResourceManagerBtn" Content="Resource Manager" Style="{StaticResource ModernNavButtonStyle}" 

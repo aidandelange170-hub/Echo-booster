@@ -11,6 +11,10 @@ namespace EchoBooster
     public partial class MainWindow : Window
     {
         private SystemBooster _booster;
+        private SecurityMonitor _securityMonitor;
+        private SystemCleanup _cleanup;
+        private PerformanceScheduler _scheduler;
+        private SystemHealthChecker _healthChecker;
         private bool _isMonitoring = false;
         private DispatcherTimer _updateTimer;
         private List<double> _cpuHistory = new List<double>();
@@ -23,13 +27,17 @@ namespace EchoBooster
         {
             InitializeComponent();
             _booster = new SystemBooster();
+            _securityMonitor = new SecurityMonitor();
+            _cleanup = new SystemCleanup();
             _updateManager = new UpdateManager(this);
+            _scheduler = new PerformanceScheduler(_booster, _cleanup, _updateManager);
+            _healthChecker = new SystemHealthChecker(_booster, _securityMonitor, _cleanup);
             _booster.StartMonitoring();
             InitializeTimer();
             UpdateSystemMetrics();
             
             // Initialize version display
-            VersionText.Text = "v3.0";
+            VersionText.Text = "v3.1";
             SystemInfoText.Text = GetOperatingSystemInfo();
             
             // Check for cached updates from previous session first
@@ -48,6 +56,13 @@ namespace EchoBooster
             Task.Delay(3000).ContinueWith(_ => 
             {
                 _updateManager.CheckForUpdatesWithNotification();
+            });
+            
+            // Schedule daily health checks
+            Task.Run(async () =>
+            {
+                await _scheduler.ScheduleDailyOptimizationAsync(2, 0); // Run optimization at 2:00 AM
+                await _scheduler.ScheduleWeeklyCleanupAsync(DayOfWeek.Sunday, 3, 0); // Run cleanup every Sunday at 3:00 AM
             });
         }
 
@@ -162,6 +177,20 @@ namespace EchoBooster
             };
 
             MemoryChartCanvas.Children.Add(polygon);
+        }
+
+        private void SecurityBtn_Click(object sender, RoutedEventArgs e)
+        {
+            TitleText.Text = "Security";
+            ContentPanel.Children.Clear();
+            LoadSecurityContent();
+        }
+
+        private void HealthBtn_Click(object sender, RoutedEventArgs e)
+        {
+            TitleText.Text = "Health";
+            ContentPanel.Children.Clear();
+            LoadHealthContent();
         }
 
         private void DashboardBtn_Click(object sender, RoutedEventArgs e)
@@ -288,6 +317,18 @@ namespace EchoBooster
             ContentPanel.Children.Add(networkView);
         }
 
+        private void LoadSecurityContent()
+        {
+            var securityView = new SecurityView(_securityMonitor, _booster);
+            ContentPanel.Children.Add(securityView);
+        }
+
+        private void LoadHealthContent()
+        {
+            var healthView = new HealthView(_healthChecker, _booster);
+            ContentPanel.Children.Add(healthView);
+        }
+
         private void LoadPerformanceContent()
         {
             var title = new TextBlock { Text = "Performance Details", FontSize = 24, FontWeight = "Bold", Foreground = new SolidColorBrush(Color.FromRgb(44, 62, 80)) };
@@ -344,6 +385,21 @@ namespace EchoBooster
             var reduceWorkingSetBtn = new Button { Content = "Reduce Working Set", Background = new SolidColorBrush(Color.FromRgb(241, 196, 15)), Foreground = new SolidColorBrush(Colors.White), Padding = new Thickness(15, 10, 15, 10), Margin = new Thickness(0, 0, 0, 10) };
             reduceWorkingSetBtn.Click += ReduceWorkingSetBtn_Click;
             stackPanel.Children.Add(reduceWorkingSetBtn);
+            
+            // New cleanup button
+            var cleanupBtn = new Button { Content = "System Cleanup", Background = new SolidColorBrush(Color.FromRgb(230, 126, 34)), Foreground = new SolidColorBrush(Colors.White), Padding = new Thickness(15, 10, 15, 10), Margin = new Thickness(0, 0, 0, 10) };
+            cleanupBtn.Click += CleanupBtn_Click;
+            stackPanel.Children.Add(cleanupBtn);
+            
+            // New security scan button
+            var securityScanBtn = new Button { Content = "Security Scan", Background = new SolidColorBrush(Color.FromRgb(192, 57, 43)), Foreground = new SolidColorBrush(Colors.White), Padding = new Thickness(15, 10, 15, 10), Margin = new Thickness(0, 0, 0, 10) };
+            securityScanBtn.Click += SecurityScanBtn_Click;
+            stackPanel.Children.Add(securityScanBtn);
+            
+            // New health check button
+            var healthCheckBtn = new Button { Content = "System Health Check", Background = new SolidColorBrush(Color.FromRgb(46, 134, 193)), Foreground = new SolidColorBrush(Colors.White), Padding = new Thickness(15, 10, 15, 10), Margin = new Thickness(0, 0, 0, 10) };
+            healthCheckBtn.Click += HealthCheckBtn_Click;
+            stackPanel.Children.Add(healthCheckBtn);
             
             ContentPanel.Children.Add(stackPanel);
         }
@@ -497,6 +553,60 @@ namespace EchoBooster
             _booster.GetType().GetMethod("ReduceWorkingSet", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance)?.Invoke(_booster, null);
             
             StatusText.Text = "Working set reduced!";
+        }
+
+        private void CleanupBtn_Click(object sender, RoutedEventArgs e)
+        {
+            StatusText.Text = "Performing system cleanup...";
+            var button = sender as Button;
+            if (button != null) button.IsEnabled = false;
+
+            Task.Run(async () =>
+            {
+                var result = await _cleanup.QuickCleanupAsync();
+                
+                Application.Current.Dispatcher.Invoke(() =>
+                {
+                    StatusText.Text = result.Message;
+                    if (button != null) button.IsEnabled = true;
+                });
+            });
+        }
+
+        private void SecurityScanBtn_Click(object sender, RoutedEventArgs e)
+        {
+            StatusText.Text = "Performing security scan...";
+            var button = sender as Button;
+            if (button != null) button.IsEnabled = false;
+
+            Task.Run(() =>
+            {
+                var securityMetrics = _securityMonitor.GetSecurityMetrics();
+                
+                Application.Current.Dispatcher.Invoke(() =>
+                {
+                    StatusText.Text = $"Security scan complete. Threats found: {securityMetrics.Threats.Count}, Security Score: {securityMetrics.SecurityScore}";
+                    if (button != null) button.IsEnabled = true;
+                });
+            });
+        }
+
+        private void HealthCheckBtn_Click(object sender, RoutedEventArgs e)
+        {
+            StatusText.Text = "Performing system health check...";
+            var button = sender as Button;
+            if (button != null) button.IsEnabled = false;
+
+            Task.Run(async () =>
+            {
+                var healthResult = await _healthChecker.PerformHealthCheckAsync();
+                
+                Application.Current.Dispatcher.Invoke(() =>
+                {
+                    StatusText.Text = $"Health check complete. Status: {healthResult.OverallStatus} (Score: {healthResult.HealthScore}/100)";
+                    if (button != null) button.IsEnabled = true;
+                });
+            });
         }
 
         private void RefreshBtn_Click(object sender, RoutedEventArgs e)

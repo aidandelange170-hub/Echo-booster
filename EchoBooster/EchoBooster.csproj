@@ -14,4 +14,22 @@
     <PackageReference Include="OxyPlot.Wpf" Version="2.1.2" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Compile Update="SecurityView.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="HealthView.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Page Update="SecurityView.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="HealthView.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+  </ItemGroup>
+
 </Project>
