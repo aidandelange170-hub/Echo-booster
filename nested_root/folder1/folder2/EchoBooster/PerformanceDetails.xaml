@@ -1,0 +1,176 @@
+<UserControl x:Class="EchoBooster.PerformanceDetails"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:EchoBooster"
+             mc:Ignorable="d" 
+             d:DesignHeight="600" d:DesignWidth="800">
+    <ScrollViewer>
+        <StackPanel Margin="20">
+            <TextBlock Text="Performance Details" FontSize="28" FontWeight="Bold" 
+                       Foreground="#2c3e50" Margin="0,0,0,20"/>
+            <TextBlock Text="Detailed system performance metrics and analysis" FontSize="16" 
+                       Foreground="#7f8c8d" Margin="0,0,0,30"/>
+
+            <!-- System Information -->
+            <GroupBox Header="System Information" Margin="0,0,0,20" Padding="15">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    
+                    <StackPanel Grid.Column="0" Margin="0,0,10,0">
+                        <TextBlock Text="Operating System:" FontWeight="SemiBold" Margin="0,0,0,5"/>
+                        <TextBlock x:Name="OsText" Text="Windows 10/11" Margin="10,0,0,10" Foreground="#7f8c8d"/>
+                        
+                        <TextBlock Text="System Architecture:" FontWeight="SemiBold" Margin="0,0,0,5"/>
+                        <TextBlock x:Name="ArchText" Text="x64" Margin="10,0,0,10" Foreground="#7f8c8d"/>
+                        
+                        <TextBlock Text="System Manufacturer:" FontWeight="SemiBold" Margin="0,0,0,5"/>
+                        <TextBlock x:Name="ManufacturerText" Text="N/A" Margin="10,0,0,10" Foreground="#7f8c8d"/>
+                    </StackPanel>
+                    
+                    <StackPanel Grid.Column="1" Margin="10,0,0,0">
+                        <TextBlock Text="System Model:" FontWeight="SemiBold" Margin="0,0,0,5"/>
+                        <TextBlock x:Name="ModelText" Text="N/A" Margin="10,0,0,10" Foreground="#7f8c8d"/>
+                        
+                        <TextBlock Text="BIOS Version:" FontWeight="SemiBold" Margin="0,0,0,5"/>
+                        <TextBlock x:Name="BiosText" Text="N/A" Margin="10,0,0,10" Foreground="#7f8c8d"/>
+                        
+                        <TextBlock Text="Boot Time:" FontWeight="SemiBold" Margin="0,0,0,5"/>
+                        <TextBlock x:Name="BootTimeText" Text="N/A" Margin="10,0,0,10" Foreground="#7f8c8d"/>
+                    </StackPanel>
+                </Grid>
+            </GroupBox>
+
+            <!-- Performance Metrics -->
+            <GroupBox Header="Performance Metrics" Margin="0,0,0,20" Padding="15">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    
+                    <StackPanel Grid.Column="0" Margin="0,0,10,0">
+                        <TextBlock Text="CPU Usage:" FontWeight="SemiBold" Margin="0,0,0,5"/>
+                        <ProgressBar x:Name="CpuUsageBar" Height="20" Margin="0,0,0,10"/>
+                        <TextBlock x:Name="CpuUsageValue" Text="0%" HorizontalAlignment="Center" 
+                                   Foreground="#7f8c8d" Margin="0,0,0,15"/>
+                        
+                        <TextBlock Text="Memory Usage:" FontWeight="SemiBold" Margin="0,0,0,5"/>
+                        <ProgressBar x:Name="MemoryUsageBar" Height="20" Margin="0,0,0,10"/>
+                        <TextBlock x:Name="MemoryUsageValue" Text="0%" HorizontalAlignment="Center" 
+                                   Foreground="#7f8c8d" Margin="0,0,0,15"/>
+                    </StackPanel>
+                    
+                    <StackPanel Grid.Column="1" Margin="10,0,0,0">
+                        <TextBlock Text="Disk Usage:" FontWeight="SemiBold" Margin="0,0,0,5"/>
+                        <ProgressBar x:Name="DiskUsageBar" Height="20" Margin="0,0,0,10"/>
+                        <TextBlock x:Name="DiskUsageValue" Text="0%" HorizontalAlignment="Center" 
+                                   Foreground="#7f8c8d" Margin="0,0,0,15"/>
+                        
+                        <TextBlock Text="Network Status:" FontWeight="SemiBold" Margin="0,0,0,5"/>
+                        <ProgressBar x:Name="NetworkUsageBar" Height="20" Margin="0,0,0,10"/>
+                        <TextBlock x:Name="NetworkUsageValue" Text="0%" HorizontalAlignment="Center" 
+                                   Foreground="#7f8c8d" Margin="0,0,0,15"/>
+                    </StackPanel>
+                </Grid>
+            </GroupBox>
+
+            <!-- Resource Usage -->
+            <GroupBox Header="Resource Usage" Margin="0,0,0,20" Padding="15">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+                    
+                    <Grid Grid.Row="0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        
+                        <StackPanel Grid.Column="0" Margin="0,0,10,0">
+                            <TextBlock Text="Total Memory:" FontWeight="SemiBold" Margin="0,0,0,5"/>
+                            <TextBlock x:Name="TotalMemoryText" Text="0 MB" Foreground="#7f8c8d"/>
+                        </StackPanel>
+                        
+                        <StackPanel Grid.Column="1" Margin="0,0,10,0">
+                            <TextBlock Text="Available Memory:" FontWeight="SemiBold" Margin="0,0,0,5"/>
+                            <TextBlock x:Name="AvailableMemoryText" Text="0 MB" Foreground="#7f8c8d"/>
+                        </StackPanel>
+                        
+                        <StackPanel Grid.Column="2">
+                            <TextBlock Text="Used Memory:" FontWeight="SemiBold" Margin="0,0,0,5"/>
+                            <TextBlock x:Name="UsedMemoryText" Text="0 MB" Foreground="#7f8c8d"/>
+                        </StackPanel>
+                    </Grid>
+                    
+                    <Grid Grid.Row="1" Margin="0,15,0,0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        
+                        <StackPanel Grid.Column="0" Margin="0,0,10,0">
+                            <TextBlock Text="Running Processes:" FontWeight="SemiBold" Margin="0,0,0,5"/>
+                            <TextBlock x:Name="ProcessCountText" Text="0" Foreground="#7f8c8d"/>
+                        </StackPanel>
+                        
+                        <StackPanel Grid.Column="1" Margin="0,0,10,0">
+                            <TextBlock Text="Total Threads:" FontWeight="SemiBold" Margin="0,0,0,5"/>
+                            <TextBlock x:Name="ThreadCountText" Text="0" Foreground="#7f8c8d"/>
+                        </StackPanel>
+                        
+                        <StackPanel Grid.Column="2">
+                            <TextBlock Text="Handles:" FontWeight="SemiBold" Margin="0,0,0,5"/>
+                            <TextBlock x:Name="HandleCountText" Text="0" Foreground="#7f8c8d"/>
+                        </StackPanel>
+                    </Grid>
+                    
+                    <Grid Grid.Row="2" Margin="0,15,0,0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        
+                        <StackPanel Grid.Column="0" Margin="0,0,10,0">
+                            <TextBlock Text="System Uptime:" FontWeight="SemiBold" Margin="0,0,0,5"/>
+                            <TextBlock x:Name="UptimeText" Text="0 days" Foreground="#7f8c8d"/>
+                        </StackPanel>
+                        
+                        <StackPanel Grid.Column="1" Margin="0,0,10,0">
+                            <TextBlock Text="CPU Count:" FontWeight="SemiBold" Margin="0,0,0,5"/>
+                            <TextBlock x:Name="CpuCountText" Text="0" Foreground="#7f8c8d"/>
+                        </StackPanel>
+                        
+                        <StackPanel Grid.Column="2">
+                            <TextBlock Text="Logical Processors:" FontWeight="SemiBold" Margin="0,0,0,5"/>
+                            <TextBlock x:Name="LogicalProcessorText" Text="0" Foreground="#7f8c8d"/>
+                        </StackPanel>
+                    </Grid>
+                </Grid>
+            </GroupBox>
+
+            <!-- Performance Recommendations -->
+            <GroupBox Header="Performance Recommendations" Margin="0,0,0,20" Padding="15">
+                <StackPanel>
+                    <TextBlock x:Name="RecommendationText" Text="No recommendations at this time. System is running optimally." 
+                               Foreground="#7f8c8d" TextWrapping="Wrap"/>
+                    <Button x:Name="OptimizeBtn" Content="Apply Recommendations" 
+                            Background="#27ae60" Foreground="White" 
+                            Padding="15,8" Margin="0,10,0,0" 
+                            HorizontalAlignment="Left"
+                            Click="OptimizeBtn_Click"/>
+                </StackPanel>
+            </GroupBox>
+        </StackPanel>
+    </ScrollViewer>
+</UserControl>
