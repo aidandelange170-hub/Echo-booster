@@ -122,6 +122,191 @@ namespace EchoBooster
             }
         }
         
+        public void IntelligentOptimize()
+        {
+            Console.WriteLine("\n--- Intelligent System Optimization ---");
+            Console.WriteLine("Performing AI-powered optimization...");
+            
+            try
+            {
+                // Get current system metrics
+                var metrics = GetSystemMetrics();
+                
+                // Based on current metrics, perform targeted optimizations
+                if (metrics.CpuUsage > 80)
+                {
+                    Console.WriteLine("High CPU usage detected - optimizing CPU-intensive processes");
+                    OptimizeCPUProcesses();
+                }
+                
+                if (metrics.MemoryUsage > 85)
+                {
+                    Console.WriteLine("High memory usage detected - optimizing memory usage");
+                    OptimizeMemoryUsage();
+                }
+                
+                if (metrics.DiskUsage > 90)
+                {
+                    Console.WriteLine("High disk usage detected - optimizing disk usage");
+                    OptimizeDiskUsage();
+                }
+                
+                Console.WriteLine("Intelligent optimization complete!");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error during intelligent optimization: {ex.Message}");
+            }
+        }
+        
+        private void OptimizeCPUProcesses()
+        {
+            try
+            {
+                var processes = Process.GetProcesses();
+                
+                foreach (var process in processes)
+                {
+                    try
+                    {
+                        if (IsSystemProcess(process.ProcessName))
+                            continue;
+                            
+                        // Get CPU usage for the process
+                        var cpuUsage = GetProcessCpuUsage(process);
+                        
+                        // If CPU usage is very high, reduce priority
+                        if (cpuUsage > 50.0)
+                        {
+                            process.PriorityClass = ProcessPriorityClass.BelowNormal;
+                        }
+                    }
+                    catch
+                    {
+                        // Ignore processes that can't be accessed
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error optimizing CPU processes: {ex.Message}");
+            }
+        }
+        
+        private void OptimizeMemoryUsage()
+        {
+            try
+            {
+                // Force garbage collection
+                GC.Collect();
+                GC.WaitForPendingFinalizers();
+                
+                // Reduce working set for this process
+                if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+                {
+                    ReduceWorkingSet();
+                }
+                
+                // Try to reduce working set for other non-critical processes
+                var processes = Process.GetProcesses();
+                
+                foreach (var process in processes)
+                {
+                    try
+                    {
+                        if (IsSystemProcess(process.ProcessName))
+                            continue;
+                            
+                        // Reduce working set for memory-intensive processes
+                        if (process.WorkingSet64 > 100 * 1024 * 1024) // More than 100MB
+                        {
+                            EmptyWorkingSet(process.Handle);
+                        }
+                    }
+                    catch
+                    {
+                        // Ignore processes that can't be accessed
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error optimizing memory usage: {ex.Message}");
+            }
+        }
+        
+        private void OptimizeDiskUsage()
+        {
+            try
+            {
+                // Clean temporary files
+                CleanTempFiles();
+                
+                // Optimize disk-related processes
+                var processes = Process.GetProcesses();
+                
+                foreach (var process in processes)
+                {
+                    try
+                    {
+                        if (IsSystemProcess(process.ProcessName))
+                            continue;
+                            
+                        // Check if process has high disk I/O
+                        // This is a simplified check - in a real application you'd use performance counters
+                        if (process.ProcessName.ToLower().Contains("search") || 
+                            process.ProcessName.ToLower().Contains("index"))
+                        {
+                            // Reduce priority of indexing/search processes during high disk usage
+                            process.PriorityClass = ProcessPriorityClass.Idle;
+                        }
+                    }
+                    catch
+                    {
+                        // Ignore processes that can't be accessed
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error optimizing disk usage: {ex.Message}");
+            }
+        }
+        
+        private void CleanTempFiles()
+        {
+            try
+            {
+                string tempPath = Path.GetTempPath();
+                var tempFiles = Directory.GetFiles(tempPath, "*", SearchOption.AllDirectories);
+                
+                int cleanedFiles = 0;
+                foreach (var file in tempFiles)
+                {
+                    try
+                    {
+                        var fileInfo = new FileInfo(file);
+                        // Only delete files older than 1 day
+                        if (fileInfo.CreationTime < DateTime.Now.AddDays(-1))
+                        {
+                            fileInfo.Delete();
+                            cleanedFiles++;
+                        }
+                    }
+                    catch
+                    {
+                        // Ignore files that can't be deleted
+                    }
+                }
+                
+                Console.WriteLine($"Cleaned {cleanedFiles} temporary files");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error cleaning temp files: {ex.Message}");
+            }
+        }
+        
         public void MonitorNetwork()
         {
             Console.WriteLine("\n--- Network Performance Monitor ---");
@@ -136,21 +321,35 @@ namespace EchoBooster
         {
             try
             {
-                var startTime = DateTime.UtcNow;
-                var startCpuTime = Process.GetCurrentProcess().TotalProcessorTime;
-                
-                // Wait for a short period to calculate CPU usage
-                Task.Delay(500).Wait();
-                
-                var endTime = DateTime.UtcNow;
-                var endCpuTime = Process.GetCurrentProcess().TotalProcessorTime;
-                
-                var cpuUsedMs = (endCpuTime - startCpuTime).TotalMilliseconds;
-                var totalMsPassed = (endTime - startTime).TotalMilliseconds;
-                
-                var cpuUsage = (cpuUsedMs / (Environment.ProcessorCount * totalMsPassed)) * 100;
-                
-                return Math.Min(100, Math.Max(0, cpuUsage));
+                // Use performance counters for more accurate CPU usage
+                if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+                {
+                    using (var cpuCounter = new PerformanceCounter("Processor", "% Processor Time", "_Total"))
+                    {
+                        cpuCounter.NextValue(); // Call first to get initial value
+                        System.Threading.Thread.Sleep(100); // Wait a bit
+                        return Math.Min(100, Math.Max(0, cpuCounter.NextValue()));
+                    }
+                }
+                else
+                {
+                    // For non-Windows platforms, use the original method
+                    var startTime = DateTime.UtcNow;
+                    var startCpuTime = Process.GetCurrentProcess().TotalProcessorTime;
+                    
+                    // Wait for a short period to calculate CPU usage
+                    Task.Delay(500).Wait();
+                    
+                    var endTime = DateTime.UtcNow;
+                    var endCpuTime = Process.GetCurrentProcess().TotalProcessorTime;
+                    
+                    var cpuUsedMs = (endCpuTime - startCpuTime).TotalMilliseconds;
+                    var totalMsPassed = (endTime - startTime).TotalMilliseconds;
+                    
+                    var cpuUsage = (cpuUsedMs / (Environment.ProcessorCount * totalMsPassed)) * 100;
+                    
+                    return Math.Min(100, Math.Max(0, cpuUsage));
+                }
             }
             catch
             {
@@ -164,29 +363,28 @@ namespace EchoBooster
             {
                 if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
                 {
-                    // Use PerformanceCounter to get actual system memory usage
-                    using (var pc = new PerformanceCounter("Memory", "Available MBytes"))
+                    // Use WMI for more accurate memory usage
+                    using (var searcher = new ManagementObjectSearcher("SELECT FreePhysicalMemory, TotalVisibleMemorySize FROM Win32_OperatingSystem"))
                     {
-                        pc.NextValue(); // Call first to get initial value
-                        System.Threading.Thread.Sleep(100); // Wait a bit
-                        float availableMemory = pc.NextValue();
-                        
-                        // Get total memory
-                        var totalMemory = GetTotalMemory();
-                        
-                        // Calculate usage percentage
-                        var usedMemory = totalMemory - availableMemory;
-                        var percentage = (usedMemory / totalMemory) * 100;
-                        
-                        return Math.Min(100, Math.Max(0, percentage));
+                        foreach (ManagementObject obj in searcher.Get())
+                        {
+                            var totalMemoryKb = Convert.ToInt64(obj["TotalVisibleMemorySize"]);
+                            var freeMemoryKb = Convert.ToInt64(obj["FreePhysicalMemory"]);
+                            obj.Dispose();
+                            
+                            var totalMemory = totalMemoryKb * 1024.0; // Convert to bytes
+                            var freeMemory = freeMemoryKb * 1024.0; // Convert to bytes
+                            var usedMemory = totalMemory - freeMemory;
+                            var percentage = (usedMemory / totalMemory) * 100;
+                            
+                            return Math.Min(100, Math.Max(0, percentage));
+                        }
                     }
                 }
-                else
-                {
-                    // For non-Windows platforms, return a simulated value
-                    // In a real application, you would use platform-specific methods
-                    return 30.0; // Simulated value
-                }
+                
+                // For non-Windows platforms, return a simulated value
+                // In a real application, you would use platform-specific methods
+                return 30.0; // Simulated value
             }
             catch
             {
@@ -401,11 +599,20 @@ namespace EchoBooster
         public double CpuUsage { get; set; }
         public double MemoryUsage { get; set; }
         public double DiskUsage { get; set; }
-        public (string status, string speed, int connections) NetworkStatus { get; set; }
+        public NetworkStatus NetworkStatus { get; set; }
         public float TotalMemory { get; set; }
         public float AvailableMemory { get; set; }
         public int ProcessCount { get; set; }
         public int ThreadCount { get; set; }
+        public int HandleCount { get; set; }
         public DateTime BootTime { get; set; }
+    }
+    
+    public class NetworkStatus
+    {
+        public string status { get; set; }
+        public int connections { get; set; }
+        public long bytesReceived { get; set; }
+        public long bytesSent { get; set; }
     }
 }

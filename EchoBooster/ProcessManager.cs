@@ -90,6 +90,25 @@ namespace EchoBooster
                 return 0;
             }
         }
+        
+        public double GetSystemCpuUsage()
+        {
+            try
+            {
+                if (_totalCpuCounter != null)
+                {
+                    // Get the current value
+                    float value = _totalCpuCounter.NextValue();
+                    Task.Delay(100).Wait(); // Wait before the next read
+                    return Math.Round(_totalCpuCounter.NextValue(), 2);
+                }
+                return 0;
+            }
+            catch
+            {
+                return 0;
+            }
+        }
 
         public string GetActiveApplicationName()
         {
