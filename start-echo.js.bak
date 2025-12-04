@@ -1,35 +1,15 @@
 /**
- * EchoBooster Node.js Launcher with Enhanced Performance
- * This script launches both the Node.js server and the C# WPF application
+ * Node.js script to launch EchoBooster application
+ * This script opens a terminal and runs the EchoBooster application
  */
 
 const { spawn, exec } = require('child_process');
 const { platform } = require('os');
 const { join, dirname } = require('path');
 const fs = require('fs');
-const http = require('http');
 
 // Get the directory where this script is located
 const scriptDir = __dirname;
-
-/**
- * Check if a service is running on a given port
- */
-function isPortInUse(port) {
-    return new Promise((resolve) => {
-        const client = new http.ClientRequest({
-            hostname: 'localhost',
-            port: port,
-            path: '/',
-            method: 'GET'
-        });
-
-        client.setTimeout(1000);
-        client.on('error', () => resolve(false));
-        client.on('response', () => resolve(true));
-        client.end();
-    });
-}
 
 /**
  * Find the EchoBooster executable in common locations
@@ -41,20 +21,20 @@ function findEchoBoosterExecutable() {
         join(scriptDir, 'EchoBooster'),
         
         // Subdirectories
-        join(scriptDir, 'EchoBooster', 'bin', 'Release', 'net8.0-windows', 'EchoBooster.exe'),
-        join(scriptDir, 'EchoBooster', 'bin', 'Debug', 'net8.0-windows', 'EchoBooster.exe'),
-        join(scriptDir, 'EchoBooster', 'bin', 'Release', 'net8.0', 'EchoBooster'),
-        join(scriptDir, 'EchoBooster', 'bin', 'Debug', 'net8.0', 'EchoBooster'),
+        join(scriptDir, 'EchoBooster', 'bin', 'Release', 'net6.0-windows', 'EchoBooster.exe'),
+        join(scriptDir, 'EchoBooster', 'bin', 'Debug', 'net6.0-windows', 'EchoBooster.exe'),
+        join(scriptDir, 'EchoBooster', 'bin', 'Release', 'net6.0', 'EchoBooster'),
+        join(scriptDir, 'EchoBooster', 'bin', 'Debug', 'net6.0', 'EchoBooster'),
         
         // Parent directory
         join(scriptDir, '..', 'EchoBooster.exe'),
         join(scriptDir, '..', 'EchoBooster'),
         
         // Common build locations
-        join(scriptDir, 'bin', 'Release', 'net8.0-windows', 'EchoBooster.exe'),
-        join(scriptDir, 'bin', 'Debug', 'net8.0-windows', 'EchoBooster.exe'),
-        join(scriptDir, 'bin', 'Release', 'net8.0', 'EchoBooster'),
-        join(scriptDir, 'bin', 'Debug', 'net8.0', 'EchoBooster'),
+        join(scriptDir, 'bin', 'Release', 'net6.0-windows', 'EchoBooster.exe'),
+        join(scriptDir, 'bin', 'Debug', 'net6.0-windows', 'EchoBooster.exe'),
+        join(scriptDir, 'bin', 'Release', 'net6.0', 'EchoBooster'),
+        join(scriptDir, 'bin', 'Debug', 'net6.0', 'EchoBooster'),
     ];
 
     for (const path of possiblePaths) {
@@ -67,62 +47,22 @@ function findEchoBoosterExecutable() {
 }
 
 /**
- * Start the Node.js server
- */
-async function startNodeServer() {
-    return new Promise((resolve) => {
-        console.log('Starting EchoBooster Node.js server...');
-        
-        const serverProcess = spawn('node', ['server.js'], {
-            cwd: scriptDir,
-            stdio: ['pipe', 'pipe', 'pipe']
-        });
-
-        serverProcess.stdout.on('data', (data) => {
-            const output = data.toString();
-            console.log(`Server: ${output.trim()}`);
-            
-            // Wait for server to be ready
-            if (output.includes('running on port')) {
-                setTimeout(() => resolve(serverProcess), 2000); // Wait 2 seconds for full initialization
-            }
-        });
-
-        serverProcess.stderr.on('data', (data) => {
-            console.error(`Server Error: ${data}`);
-        });
-
-        serverProcess.on('close', (code) => {
-            console.log(`Server process exited with code ${code}`);
-        });
-    });
-}
-
-/**
  * Open a terminal and run the EchoBooster application
  */
-async function openTerminalAndRun() {
+function openTerminalAndRun() {
     console.log('Starting EchoBooster Application...');
-
-    // Start Node.js server first
-    const serverProcess = await startNodeServer();
-    console.log('Node.js server started successfully!');
 
     // Try to find the executable
     const exePath = findEchoBoosterExecutable();
 
     if (exePath) {
         console.log(`Found EchoBooster at: ${exePath}`);
-        console.log('Launching EchoBooster C# application...');
+        console.log('Launching EchoBooster...');
 
         try {
             if (platform() === 'win32') {
                 // On Windows
-                spawn(exePath, [], { 
-                    detached: true, 
-                    stdio: 'ignore',
-                    env: { ...process.env, NODE_SERVER_STARTED: 'true' }
-                });
+                spawn(exePath, [], { detached: true, stdio: 'ignore' });
             } else if (platform() === 'darwin') {  // macOS
                 // On macOS, try to open in Terminal
                 spawn('open', ['-a', 'Terminal', exePath]);
@@ -148,10 +88,10 @@ async function openTerminalAndRun() {
             }
 
             console.log('EchoBooster launched successfully!');
-            return { serverProcess, success: true };
+            return true;
         } catch (error) {
             console.log(`Error launching EchoBooster: ${error.message}`);
-            return { serverProcess, success: false };
+            return false;
         }
     } else {
         console.log('EchoBooster executable not found!');
@@ -167,8 +107,7 @@ async function openTerminalAndRun() {
                     console.log('Found EchoBooster project, building and running...');
                     spawn('dotnet', ['run', '--project', 'EchoBooster'], {
                         cwd: scriptDir,
-                        stdio: 'inherit',
-                        env: { ...process.env, NODE_SERVER_STARTED: 'true' }
+                        stdio: 'inherit'
                     });
                 } else {
                     console.log('EchoBooster project not found.');
@@ -200,60 +139,47 @@ async function openTerminalAndRun() {
 
                 if (!terminalFound) {
                     console.log('No known terminal found. Please open a terminal manually.');
-                    return { serverProcess, success: false };
+                    return false;
                 }
             }
 
-            console.log('Terminal opened. Please navigate to the EchoBooster directory and run \\'dotnet run\\'.');
-            return { serverProcess, success: true };
+            console.log('Terminal opened. Please navigate to the EchoBooster directory and run \'dotnet run\'.');
+            return true;
         } catch (error) {
             console.log(`Error opening terminal: ${error.message}`);
-            return { serverProcess, success: false };
+            return false;
         }
     }
+
+    return true;
 }
 
 /**
  * Main function
  */
-async function main() {
-    console.log('EchoBooster Enhanced Launcher');
-    console.log('='.repeat(30));
-    console.log('Starting Node.js server and C# application...');
+function main() {
+    console.log('EchoBooster Launcher');
+    console.log('='.repeat(20));
 
-    const { serverProcess, success } = await openTerminalAndRun();
+    const success = openTerminalAndRun();
 
     if (success) {
-        console.log('\\nBoth applications started successfully!');
-        console.log('Node.js server is running with real-time monitoring capabilities.');
-        console.log('C# WPF application provides the main UI experience.');
+        console.log('\nOperation completed successfully.');
     } else {
-        console.log('\\nOperation failed.');
+        console.log('\nOperation failed.');
     }
 
-    // Keep the launcher running
-    process.on('SIGINT', () => {
-        console.log('\\nShutting down EchoBooster...');
-        if (serverProcess) {
-            serverProcess.kill();
-        }
-        process.exit(0);
-    });
-
-    // Wait for user input before exiting
+    // Wait for user input before exiting (in a real implementation, you might want to handle this differently)
     process.stdin.setEncoding('utf8');
     process.stdin.on('readable', () => {
         const chunk = process.stdin.read();
         if (chunk !== null) {
-            if (serverProcess) {
-                serverProcess.kill();
-            }
             process.exit(0);
         }
     });
 
-    console.log('\\nPress Enter to stop all services and exit...');
+    console.log('\nPress Enter to exit...');
 }
 
 // Run the main function
-main().catch(console.error);
+main();
