@@ -17,14 +17,26 @@ namespace EchoBooster
         private List<double> _memoryHistory = new List<double>();
         private Random _random = new Random();
         private UserControl _currentView;
+        private UpdateManager _updateManager;
 
         public MainWindow()
         {
             InitializeComponent();
             _booster = new SystemBooster();
+            _updateManager = new UpdateManager(this);
             _booster.StartMonitoring();
             InitializeTimer();
             UpdateSystemMetrics();
+            
+            // Initialize version display
+            VersionText.Text = "v3.0";
+            SystemInfoText.Text = GetOperatingSystemInfo();
+            
+            // Start auto-update check after a delay
+            Task.Delay(3000).ContinueWith(_ => 
+            {
+                _updateManager.CheckForUpdatesWithNotification();
+            });
         }
 
         private void InitializeTimer()
@@ -524,10 +536,38 @@ namespace EchoBooster
             }
         }
 
+        private void UpdateCheckBtn_Click(object sender, RoutedEventArgs e)
+        {
+            StatusText.Text = "Checking for updates...";
+            _updateManager.CheckForUpdatesWithNotification();
+        }
+
+        private string GetOperatingSystemInfo()
+        {
+            var platform = Environment.OSVersion.Platform;
+            var version = Environment.OSVersion.VersionString;
+            
+            if (platform == PlatformID.Win32NT)
+            {
+                return "Windows";
+            }
+            else if (platform == PlatformID.Unix)
+            {
+                return "Linux/Unix";
+            }
+            else if (platform == PlatformID.MacOSX)
+            {
+                return "macOS";
+            }
+            
+            return platform.ToString();
+        }
+
         protected override void OnClosed(EventArgs e)
         {
             _booster?.StopMonitoring();
             _updateTimer?.Stop();
+            _updateManager?.Dispose();
             base.OnClosed(e);
         }
     }
