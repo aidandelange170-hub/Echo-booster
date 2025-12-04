@@ -1,8 +1,7 @@
 {
-  "name": "echobooster",
+  "name": "echobooster-full-package",
   "version": "4.1.0",
-  "description": "Advanced System Performance Optimizer with Node.js integration",
-  "main": "server.js",
+  "description": "Complete EchoBooster v4.1 Package with all startup scripts and documentation",
   "scripts": {
     "start": "node server.js",
     "start-app": "concurrently \"npm run start\" \"npm run run-csharp\"",
@@ -10,7 +9,9 @@
     "dev": "nodemon server.js",
     "build": "dotnet build EchoBooster/EchoBooster.csproj",
     "run": "npm run build && dotnet run --project EchoBooster/EchoBooster.csproj",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "install-all": "npm install && dotnet restore",
+    "clean": "rm -rf EchoBooster/bin EchoBooster/obj 2>/dev/null || true",
+    "full-start": "npm run clean && npm run install-all && npm run start-app"
   },
   "keywords": [
     "system",
@@ -18,10 +19,12 @@
     "performance",
     "monitoring",
     "nodejs",
-    "electron",
+    "csharp",
     "windows",
     "process",
-    "management"
+    "management",
+    "advanced",
+    "optimization"
   ],
   "author": "EchoBooster Team",
   "license": "MIT",
@@ -40,10 +43,10 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/your-repo/echobooster.git"
+    "url": "https://github.com/echobooster/echobooster.git"
   },
   "bugs": {
-    "url": "https://github.com/your-repo/echobooster/issues"
+    "url": "https://github.com/echobooster/echobooster/issues"
   },
-  "homepage": "https://github.com/your-repo/echobooster#readme"
+  "homepage": "https://github.com/echobooster/echobooster#readme"
 }

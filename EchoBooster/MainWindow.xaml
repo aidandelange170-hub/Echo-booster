@@ -59,6 +59,8 @@
                             Margin="0,0,0,10" Click="NetworkBtn_Click" Tag="network"/>
                     <Button x:Name="OptimizeBtn" Content="Optimize" Style="{StaticResource ModernNavButtonStyle}" 
                             Margin="0,0,0,10" Click="OptimizeBtn_Click" Tag="optimize"/>
+                    <Button x:Name="AdvancedOptimizeBtn" Content="Advanced Optimize" Style="{StaticResource ModernNavButtonStyle}" 
+                            Margin="0,0,0,10" Click="AdvancedOptimizeBtn_Click" Tag="advanced-optimize"/>
                     <Button x:Name="ResourceManagerBtn" Content="Resource Manager" Style="{StaticResource ModernNavButtonStyle}" 
                             Margin="0,0,0,10" Click="ResourceManagerBtn_Click" Tag="resource"/>
                     <Button x:Name="SettingsBtn" Content="Settings" Style="{StaticResource ModernNavButtonStyle}" 

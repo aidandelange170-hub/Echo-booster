@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EchoBooster v4.1 - System Optimizer</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            color: #fff;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        header {
+            text-align: center;
+            padding: 30px 0;
+            margin-bottom: 30px;
+        }
+        
+        h1 {
+            font-size: 3rem;
+            margin-bottom: 10px;
+            background: linear-gradient(45deg, #4CAF50, #FF9800, #2196F3);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .subtitle {
+            font-size: 1.2rem;
+            color: #ccc;
+            margin-bottom: 30px;
+        }
+        
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+        
+        .feature-card {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 15px;
+            padding: 25px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        .feature-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+        
+        .feature-card h3 {
+            color: #4CAF50;
+            margin-bottom: 15px;
+            font-size: 1.5rem;
+        }
+        
+        .feature-card p {
+            color: #bbb;
+            line-height: 1.6;
+        }
+        
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+        
+        .stat-card {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 15px;
+            padding: 20px;
+            text-align: center;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .stat-card .value {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: #4CAF50;
+            margin: 10px 0;
+        }
+        
+        .stat-card .label {
+            color: #ccc;
+            font-size: 1rem;
+        }
+        
+        .cta-section {
+            text-align: center;
+            padding: 40px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 15px;
+            margin: 40px 0;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .cta-button {
+            background: linear-gradient(45deg, #4CAF50, #FF9800);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            font-size: 1.2rem;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+            margin: 10px;
+        }
+        
+        .cta-button:hover {
+            transform: scale(1.05);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+        }
+        
+        footer {
+            text-align: center;
+            padding: 20px;
+            color: #777;
+            font-size: 0.9rem;
+        }
+        
+        .version-tag {
+            display: inline-block;
+            background: #FF9800;
+            color: #000;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-weight: bold;
+            margin: 10px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>EchoBooster</h1>
+            <div class="version-tag">VERSION 4.1</div>
+            <p class="subtitle">Advanced System Performance Optimizer with Modern UI and Enhanced Features</p>
+        </header>
+        
+        <div class="stats">
+            <div class="stat-card">
+                <div class="value">🚀</div>
+                <div class="label">Performance</div>
+            </div>
+            <div class="stat-card">
+                <div class="value">⚡</div>
+                <div class="label">Speed</div>
+            </div>
+            <div class="stat-card">
+                <div class="value">🛡️</div>
+                <div class="label">Security</div>
+            </div>
+            <div class="stat-card">
+                <div class="value">🎨</div>
+                <div class="label">UI/UX</div>
+            </div>
+        </div>
+        
+        <div class="features-grid">
+            <div class="feature-card">
+                <h3>🚀 Advanced Optimization Suite</h3>
+                <p>New advanced optimization algorithms and tools for deeper system improvements. Includes full system optimization, deep cleaning, registry optimization, service optimization, driver optimization, and performance tuning.</p>
+            </div>
+            
+            <div class="feature-card">
+                <h3>⚡ Performance Tuning Engine</h3>
+                <p>Enhanced performance tuning with multiple optimization modes. AI-powered system optimization based on usage patterns for intelligent resource allocation.</p>
+            </div>
+            
+            <div class="feature-card">
+                <h3>🎨 Modern UI Redesign</h3>
+                <p>Completely redesigned interface with new navigation and advanced optimization panel. Features dark/light themes, smooth animations, and responsive design.</p>
+            </div>
+            
+            <div class="feature-card">
+                <h3>🧠 Intelligent Optimization</h3>
+                <p>AI-powered system optimization based on usage patterns. Predictive analytics for system performance and customizable threshold alerts.</p>
+            </div>
+            
+            <div class="feature-card">
+                <h3>🌐 Node.js Integration</h3>
+                <p>Enhanced monitoring capabilities with Node.js server providing REST API and WebSocket support for real-time metrics and external integration.</p>
+            </div>
+            
+            <div class="feature-card">
+                <h3>🛡️ System Protection</h3>
+                <p>Enhanced safeguards during optimization processes to protect your system while performing advanced optimizations with improved security measures.</p>
+            </div>
+        </div>
+        
+        <div class="cta-section">
+            <h2>Ready to Boost Your System Performance?</h2>
+            <p>Download and run EchoBooster v4.1 for the ultimate system optimization experience</p>
+            
+            <a href="start-application.bat" class="cta-button">Run Application (Windows)</a>
+            <a href="start-application.sh" class="cta-button">Run Application (Linux/Mac)</a>
+            <a href="start-application.ps1" class="cta-button">Run with PowerShell</a>
+        </div>
+        
+        <footer>
+            <p>EchoBooster v4.1 - Advanced System Performance Optimizer</p>
+            <p>© 2025 EchoBooster Team. All rights reserved.</p>
+        </footer>
+    </div>
+</body>
+</html>

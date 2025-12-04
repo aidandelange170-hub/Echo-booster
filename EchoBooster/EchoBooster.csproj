@@ -6,6 +6,13 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <UseWPF>true</UseWPF>
+    <Version>4.1.0</Version>
+    <AssemblyVersion>4.1.0.0</AssemblyVersion>
+    <FileVersion>4.1.0.0</FileVersion>
+    <AssemblyTitle>EchoBooster - System Optimizer</AssemblyTitle>
+    <AssemblyDescription>Advanced System Performance Optimizer with Modern UI</AssemblyDescription>
+    <AssemblyCompany>EchoBooster Team</AssemblyCompany>
+    <AssemblyProduct>EchoBooster</AssemblyProduct>
   </PropertyGroup>
 
   <ItemGroup>
