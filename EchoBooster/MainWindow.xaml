@@ -39,6 +39,8 @@
                             Margin="0,0,0,10" Click="NetworkBtn_Click"/>
                     <Button x:Name="OptimizeBtn" Content="Optimize" Style="{StaticResource NavButtonStyle}" 
                             Margin="0,0,0,10" Click="OptimizeBtn_Click"/>
+                    <Button x:Name="ResourceManagerBtn" Content="Resource Manager" Style="{StaticResource NavButtonStyle}" 
+                            Margin="0,0,0,10" Click="ResourceManagerBtn_Click"/>
                 </StackPanel>
             </Border>
             

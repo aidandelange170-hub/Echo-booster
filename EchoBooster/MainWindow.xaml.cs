@@ -175,6 +175,13 @@ namespace EchoBooster
             LoadOptimizeContent();
         }
 
+        private void ResourceManagerBtn_Click(object sender, RoutedEventArgs e)
+        {
+            TitleText.Text = "Resource Manager";
+            ContentPanel.Children.Clear();
+            LoadResourceManagerContent();
+        }
+
         private void LoadDashboardContent()
         {
             // Rebuild the dashboard content
@@ -386,6 +393,70 @@ namespace EchoBooster
             ContentPanel.Children.Add(stackPanel);
         }
 
+        private void LoadResourceManagerContent()
+        {
+            var title = new TextBlock { Text = "Resource Manager", FontSize = 24, FontWeight = "Bold", Foreground = new SolidColorBrush(Color.FromRgb(44, 62, 80)) };
+            title.Margin = new Thickness(0, 0, 0, 20);
+            ContentPanel.Children.Add(title);
+            
+            var subtitle = new TextBlock { Text = "Manage CPU usage and application resources", FontSize = 16, Foreground = new SolidColorBrush(Color.FromRgb(127, 140, 141)) };
+            subtitle.Margin = new Thickness(0, 0, 0, 30);
+            ContentPanel.Children.Add(subtitle);
+            
+            // CPU Usage Section
+            var cpuUsageGroup = new GroupBox { Header = "CPU Usage", Margin = new Thickness(0, 0, 0, 20) };
+            var cpuUsageStack = new StackPanel();
+            
+            var cpuUsageLabel = new TextBlock { Text = $"Current CPU Usage: {CpuUsageText.Text}", FontSize = 14, Margin = new Thickness(0, 0, 0, 10) };
+            cpuUsageStack.Children.Add(cpuUsageLabel);
+            
+            var cpuProgressBar = new ProgressBar { Height = 20, Margin = new Thickness(0, 0, 0, 10) };
+            cpuProgressBar.Value = CpuProgressBar.Value;
+            cpuUsageStack.Children.Add(cpuProgressBar);
+            
+            cpuUsageGroup.Content = cpuUsageStack;
+            ContentPanel.Children.Add(cpuUsageGroup);
+            
+            // Resource Management Actions
+            var actionsGroup = new GroupBox { Header = "Resource Management Actions", Margin = new Thickness(0, 0, 0, 20) };
+            var actionsStack = new StackPanel { Orientation = Orientation.Vertical };
+            
+            var closeBackgroundAppsBtn = new Button 
+            { 
+                Content = "Close All Background Apps", 
+                Background = new SolidColorBrush(Color.FromRgb(231, 76, 60)), 
+                Foreground = new SolidColorBrush(Colors.White), 
+                Padding = new Thickness(15, 10, 15, 10), 
+                Margin = new Thickness(0, 0, 0, 10) 
+            };
+            closeBackgroundAppsBtn.Click += CloseBackgroundAppsBtn_Click;
+            actionsStack.Children.Add(closeBackgroundAppsBtn);
+            
+            var showActiveAppBtn = new Button 
+            { 
+                Content = "Show Active Application", 
+                Background = new SolidColorBrush(Color.FromRgb(52, 152, 219)), 
+                Foreground = new SolidColorBrush(Colors.White), 
+                Padding = new Thickness(15, 10, 15, 10), 
+                Margin = new Thickness(0, 0, 0, 10) 
+            };
+            showActiveAppBtn.Click += ShowActiveAppBtn_Click;
+            actionsStack.Children.Add(showActiveAppBtn);
+            
+            actionsGroup.Content = actionsStack;
+            ContentPanel.Children.Add(actionsGroup);
+            
+            // Active Application Info
+            var activeAppGroup = new GroupBox { Header = "Active Application", Margin = new Thickness(0, 0, 0, 20) };
+            var activeAppStack = new StackPanel();
+            
+            var activeAppLabel = new TextBlock { x:Name = "ActiveAppText", Text = "Active Application: " + _booster.GetActiveApplicationName(), FontSize = 14, Margin = new Thickness(0, 0, 0, 10) };
+            activeAppStack.Children.Add(activeAppLabel);
+            
+            activeAppGroup.Content = activeAppStack;
+            ContentPanel.Children.Add(activeAppGroup);
+        }
+
         private void AddMetricRow(Grid grid, int row, string label, string value)
         {
             var labelBlock = new TextBlock { Text = label, FontSize = 14, FontWeight = "SemiBold", Foreground = new SolidColorBrush(Color.FromRgb(44, 62, 80)) };
@@ -449,6 +520,42 @@ namespace EchoBooster
             _booster.StopMonitoring();
             _isMonitoring = false;
             StatusText.Text = "Monitoring stopped";
+        }
+
+        private async void CloseBackgroundAppsBtn_Click(object sender, RoutedEventArgs e)
+        {
+            StatusText.Text = "Closing background applications...";
+            var button = sender as Button;
+            if (button != null) button.IsEnabled = false;
+
+            try
+            {
+                await _booster.CloseBackgroundProcesses();
+                StatusText.Text = "Background applications closed successfully!";
+                
+                // Update the active application display
+                if (ActiveAppText != null)
+                {
+                    ActiveAppText.Text = "Active Application: " + _booster.GetActiveApplicationName();
+                }
+            }
+            catch (Exception ex)
+            {
+                StatusText.Text = $"Error closing background apps: {ex.Message}";
+            }
+            
+            if (button != null) button.IsEnabled = true;
+        }
+
+        private void ShowActiveAppBtn_Click(object sender, RoutedEventArgs e)
+        {
+            string activeApp = _booster.GetActiveApplicationName();
+            StatusText.Text = $"Active Application: {activeApp}";
+            
+            if (ActiveAppText != null)
+            {
+                ActiveAppText.Text = "Active Application: " + activeApp;
+            }
         }
 
         protected override void OnClosed(EventArgs e)

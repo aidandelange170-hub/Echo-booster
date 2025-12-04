@@ -26,7 +26,7 @@ namespace EchoBooster
         {
             _processes.Clear();
             
-            var processes = Process.GetProcesses();
+            var processes = _booster.GetProcessList();
             foreach (var process in processes)
             {
                 try
@@ -34,15 +34,12 @@ namespace EchoBooster
                     var processInfo = new ProcessInfo
                     {
                         ProcessName = process.ProcessName,
-                        ProcessId = process.Id,
-                        ThreadCount = process.Threads.Count,
-                        MemoryUsage = process.WorkingSet64 / (1024 * 1024), // Convert to MB
-                        Status = "Running"
+                        ProcessId = process.ProcessId,
+                        CpuUsage = process.CpuUsage,
+                        MemoryUsage = process.MemoryUsage,
+                        ThreadCount = process.ThreadCount,
+                        Status = process.IsCritical ? "Critical" : "Running"
                     };
-                    
-                    // Try to get CPU usage (this is a simplified approach)
-                    // In a real application, you would need to track CPU usage over time
-                    processInfo.CpuUsage = GetSimulatedCpuUsageForProcess();
                     
                     _processes.Add(processInfo);
                 }
@@ -51,14 +48,6 @@ namespace EchoBooster
                     // Skip processes that can't be accessed
                 }
             }
-        }
-        
-        private double GetSimulatedCpuUsageForProcess()
-        {
-            // In a real application, this would calculate actual CPU usage per process
-            // For now, we'll return a random value for demonstration
-            var random = new Random();
-            return random.NextDouble() * 10; // 0-10%
         }
     }
     

@@ -13,7 +13,13 @@ namespace EchoBooster
     {
         private bool isMonitoring = false;
         private Task? monitoringTask;
+        private ProcessManager _processManager;
         
+        public SystemBooster()
+        {
+            _processManager = new ProcessManager();
+        }
+
         public void StartMonitoring()
         {
             if (!isMonitoring)
@@ -371,6 +377,22 @@ namespace EchoBooster
         {
             isMonitoring = false;
             monitoringTask?.Wait(1000); // Wait up to 1 second for task to finish
+            _processManager?.Dispose();
+        }
+
+        public List<ProcessManager.ProcessInfo> GetProcessList()
+        {
+            return _processManager.GetProcessesWithUsage();
+        }
+
+        public async Task CloseBackgroundProcesses()
+        {
+            await _processManager.CloseBackgroundProcesses();
+        }
+
+        public string GetActiveApplicationName()
+        {
+            return _processManager.GetActiveApplicationName();
         }
     }
     
