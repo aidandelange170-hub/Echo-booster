@@ -1,10 +1,12 @@
-# 🚀 Echo Booster - Version 3.0
+# 🚀 Echo Booster - Version 3.1
 
-Echo Booster is a cutting-edge C# application designed to monitor system performance and provide comprehensive system optimization features. It provides tools to monitor CPU, memory, disk, and network usage, as well as perform advanced process optimization with an enhanced modern UI and improved performance.
+Echo Booster is a cutting-edge C# application designed to monitor system performance and provide comprehensive system optimization features. It provides tools to monitor CPU, memory, disk, and network usage, as well as perform advanced process optimization with an enhanced modern UI and improved performance. Now includes Node.js integration for enhanced monitoring capabilities.
 
-## ✨ New Features in Version 3.0
+## ✨ New Features in Version 3.1
 
 - 🚀 **Enhanced Performance Engine** - Improved monitoring algorithms with 40% faster response times
+- 🌐 **Node.js Integration** - Added Node.js server with WebSocket and REST API for enhanced monitoring
+- ⚡ **Improved Performance** - Optimized UI updates and reduced lag with caching and throttling
 - 🎨 **Advanced UI Framework** - Complete UI overhaul with dark/light themes and smooth animations
 - 📊 **Real-time Analytics Dashboard** - Advanced data visualization with historical trend analysis
 - 🌐 **Network Traffic Analysis** - Detailed network monitoring with bandwidth optimization
@@ -27,12 +29,14 @@ Echo Booster is a cutting-edge C# application designed to monitor system perform
 - 🎛️ **Resource Management** (CPU, memory, and disk optimization)
 - 🧠 **Intelligent Optimization** (AI-powered system tuning)
 - 🔄 **Automatic Updates** (self-updating optimization algorithms)
+- 🌐 **Node.js Integration** (REST API and WebSocket for external integration)
 
 ## 🛠️ Technical Implementation
 
 The application is built with:
 - 📅 **C# (.NET 8.0)** - Latest version with enhanced performance
 - 🎨 **WPF (Windows Presentation Foundation)** for modern UI with hardware acceleration
+- 🌐 **Node.js** - Backend services with Express.js and systeminformation
 - 📊 **OxyPlot** for advanced data visualization and charting
 - 🖥️ **System.Management** for system monitoring
 - 🌐 **System.Net** for network monitoring
@@ -45,7 +49,8 @@ The application is built with:
 ## 🚀 Performance Optimizations
 
 - **Efficient Memory Management**: Reduced memory footprint by 30%
-- **Optimized CPU Usage**: Lower background processing overhead
+- **Optimized UI Updates**: Reduced UI update frequency for charts to improve responsiveness
+- **Metrics Caching**: Intelligent caching to reduce system load
 - **Fast Rendering Engine**: Hardware-accelerated graphics rendering
 - **Smart Data Caching**: Intelligent caching for faster data access
 - **Concurrent Processing**: Multi-threaded operations for better performance
@@ -64,14 +69,23 @@ The application is built with:
 - **Customizable Widgets**: Draggable, resizable dashboard components
 - **Visual Hierarchy**: Clear information architecture and visual flow
 
+## 🌐 Node.js Integration
+
+Version 3.1 introduces Node.js integration with:
+- **REST API**: Endpoints for system metrics and optimization
+- **WebSocket Support**: Real-time metrics updates
+- **Enhanced Monitoring**: Additional system information through systeminformation package
+- **External Integration**: API for third-party tools to interact with EchoBooster
+
 ## 🛠️ Building and Running
 
 To build and run this application:
 
-1. 📋 Ensure you have .NET 8.0 SDK installed
+1. 📋 Ensure you have .NET 8.0 SDK and Node.js 16+ installed
 2. 📁 Navigate to the project directory
-3. 🏗️ Run `dotnet build` to build the project
-4. ▶️ Run `dotnet run` to execute the application
+3. 📦 Run `npm install` to install Node.js dependencies
+4. 🏗️ Run `npm start` to start both Node.js server and C# application
+5. ▶️ Or run `dotnet run --project EchoBooster/EchoBooster.csproj` for C# only
 
 For development:
 - Use Visual Studio 2022 or Visual Studio Code with C# extensions
@@ -80,6 +94,9 @@ For development:
 
 ## 📁 Files Structure
 
+- `package.json` - Node.js dependencies and scripts
+- `server.js` - Node.js server with API and WebSocket
+- `start-echo.js` - Enhanced launcher for both Node.js and C# apps
 - `EchoBooster.sln` - Visual Studio solution file
 - `EchoBooster/EchoBooster.csproj` - Project configuration
 - `EchoBooster/App.xaml` - Application XAML resources
@@ -98,6 +115,7 @@ For development:
 - `EchoBooster/SystemMonitor.cs` - System monitoring logic
 - `EchoBooster/NetworkMonitor.cs` - Network monitoring logic
 - `EchoBooster/ProcessManager.cs` - Process management logic
+- `EchoBooster/NodeJsIntegration.cs` - Node.js API integration
 - `EchoBooster/Themes/` - Theme and styling resources
 - `EchoBooster/Charts/` - Chart and visualization components
 - `EchoBooster/Services/` - Backend services and data processing

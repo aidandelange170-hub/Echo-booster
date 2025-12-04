@@ -14,6 +14,10 @@ namespace EchoBooster
         private bool isMonitoring = false;
         private Task? monitoringTask;
         private ProcessManager _processManager;
+        private readonly object _lockObject = new object();
+        private SystemMetrics _lastMetrics = new SystemMetrics();
+        private DateTime _lastMetricsUpdate = DateTime.MinValue;
+        private readonly TimeSpan _metricsCacheDuration = TimeSpan.FromMilliseconds(500); // Cache for 500ms
         
         public SystemBooster()
         {
@@ -33,14 +37,31 @@ namespace EchoBooster
         {
             while (isMonitoring)
             {
-                // Perform periodic monitoring tasks
-                await Task.Delay(5000); // Check every 5 seconds
+                try
+                {
+                    // Perform periodic monitoring tasks
+                    await Task.Delay(2000); // Check every 2 seconds, more responsive
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"Error in monitoring loop: {ex.Message}");
+                    await Task.Delay(5000); // Wait longer if there's an error
+                }
             }
         }
         
         public SystemMetrics GetSystemMetrics()
         {
-            return new SystemMetrics
+            // Use caching to improve performance - return cached metrics if not expired
+            lock (_lockObject)
+            {
+                if (DateTime.Now - _lastMetricsUpdate < _metricsCacheDuration)
+                {
+                    return _lastMetrics;
+                }
+            }
+
+            var metrics = new SystemMetrics
             {
                 CpuUsage = GetCpuUsage(),
                 MemoryUsage = GetMemoryUsage(),
@@ -52,6 +73,15 @@ namespace EchoBooster
                 ThreadCount = GetTotalThreadCount(),
                 BootTime = GetBootTime()
             };
+
+            // Update cached metrics
+            lock (_lockObject)
+            {
+                _lastMetrics = metrics;
+                _lastMetricsUpdate = DateTime.Now;
+            }
+
+            return metrics;
         }
         
         public void CheckPerformance()
@@ -315,6 +345,105 @@ namespace EchoBooster
             Console.WriteLine($"Network Status: {networkInfo.status}");
             Console.WriteLine($"Network Speed: {networkInfo.speed}");
             Console.WriteLine($"Active Connections: {networkInfo.connections}");
+            Console.WriteLine($"Bytes Received: {networkInfo.bytesReceived}");
+            Console.WriteLine($"Bytes Sent: {networkInfo.bytesSent}");
+        }
+        
+        public async Task<SystemMetrics> GetDetailedSystemMetricsAsync()
+        {
+            return await Task.Run(() =>
+            {
+                var metrics = GetSystemMetrics();
+                
+                // Add more detailed metrics
+                metrics.HandleCount = GetTotalHandleCount();
+                
+                return metrics;
+            });
+        }
+        
+        private int GetTotalHandleCount()
+        {
+            try
+            {
+                var processes = Process.GetProcesses();
+                int totalHandles = 0;
+                
+                foreach (var process in processes)
+                {
+                    try
+                    {
+                        totalHandles += process.HandleCount;
+                    }
+                    catch
+                    {
+                        // Ignore processes that can't be accessed
+                    }
+                }
+                
+                return totalHandles;
+            }
+            catch
+            {
+                return 0;
+            }
+        }
+        
+        public async Task<bool> PerformAdvancedOptimizationAsync()
+        {
+            Console.WriteLine("\n--- Advanced System Optimization ---");
+            
+            try
+            {
+                // Run multiple optimizations in parallel for better performance
+                var optimizationTasks = new Task[]
+                {
+                    Task.Run(() => OptimizeProcesses()),
+                    Task.Run(() => IntelligentOptimize()),
+                    Task.Run(() => OptimizeDiskUsage()),
+                    Task.Run(() => CleanTempFiles())
+                };
+                
+                await Task.WhenAll(optimizationTasks);
+                
+                Console.WriteLine("Advanced optimization completed!");
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error during advanced optimization: {ex.Message}");
+                return false;
+            }
+        }
+        
+        public List<ProcessManager.ProcessInfo> GetHighResourceProcesses(int cpuThreshold = 20, long memoryThreshold = 100) // 20% CPU, 100MB memory
+        {
+            var allProcesses = GetProcessList();
+            return allProcesses.Where(p => p.CpuUsage > cpuThreshold || p.MemoryUsage > memoryThreshold).ToList();
+        }
+        
+        public async Task<bool> TerminateHighResourceProcesses(int cpuThreshold = 20, long memoryThreshold = 100)
+        {
+            var highResourceProcesses = GetHighResourceProcesses(cpuThreshold, memoryThreshold);
+            
+            foreach (var process in highResourceProcesses)
+            {
+                try
+                {
+                    var proc = Process.GetProcessById(process.ProcessId);
+                    if (!IsSystemProcess(proc.ProcessName))
+                    {
+                        proc.Kill();
+                        await Task.Delay(100); // Small delay to allow process to terminate
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"Could not terminate process {process.ProcessName} (PID: {process.ProcessId}): {ex.Message}");
+                }
+            }
+            
+            return true;
         }
         
         private double GetCpuUsage()

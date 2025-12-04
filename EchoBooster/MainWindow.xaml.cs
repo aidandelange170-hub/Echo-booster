@@ -11,6 +11,7 @@ namespace EchoBooster
     public partial class MainWindow : Window
     {
         private SystemBooster _booster;
+        private NodeJsIntegration _nodeIntegration;
         private bool _isMonitoring = false;
         private DispatcherTimer _updateTimer;
         private List<double> _cpuHistory = new List<double>();
@@ -23,13 +24,14 @@ namespace EchoBooster
         {
             InitializeComponent();
             _booster = new SystemBooster();
+            _nodeIntegration = new NodeJsIntegration();
             _updateManager = new UpdateManager(this);
             _booster.StartMonitoring();
             InitializeTimer();
             UpdateSystemMetrics();
             
             // Initialize version display
-            VersionText.Text = "v3.0";
+            VersionText.Text = "v3.1"; // Updated version to reflect new features
             SystemInfoText.Text = GetOperatingSystemInfo();
             
             // Check for cached updates from previous session first
@@ -49,19 +51,38 @@ namespace EchoBooster
             {
                 _updateManager.CheckForUpdatesWithNotification();
             });
+            
+            // Check if Node.js server is running and update UI accordingly
+            Task.Run(async () =>
+            {
+                await Task.Delay(2000); // Wait a bit for the Node.js server to start
+                var nodeAvailable = await _nodeIntegration.StartNodeServerAsync();
+                Dispatcher.Invoke(() =>
+                {
+                    if (nodeAvailable)
+                    {
+                        StatusText.Text = "Ready - Node.js server connected";
+                        SystemStatusText.Text = "System Status: Enhanced";
+                    }
+                });
+            });
         }
 
         private void InitializeTimer()
         {
             _updateTimer = new DispatcherTimer();
-            _updateTimer.Interval = TimeSpan.FromSeconds(2);
+            _updateTimer.Interval = TimeSpan.FromSeconds(1); // Update more frequently for better responsiveness
             _updateTimer.Tick += UpdateTimer_Tick;
             _updateTimer.Start();
         }
 
         private void UpdateTimer_Tick(object sender, EventArgs e)
         {
-            UpdateSystemMetrics();
+            // Only update UI if the main window is visible
+            if (this.Visibility == Visibility.Visible)
+            {
+                UpdateSystemMetrics();
+            }
         }
 
         private void UpdateSystemMetrics()
@@ -69,30 +90,42 @@ namespace EchoBooster
             // Get real metrics from the booster
             var metrics = _booster.GetSystemMetrics();
             
-            // Update UI elements
-            CpuUsageText.Text = $"{metrics.CpuUsage:F1}%";
-            MemoryUsageText.Text = $"{metrics.MemoryUsage:F1}%";
-            DiskUsageText.Text = $"{metrics.DiskUsage:F1}%";
-            
-            CpuProgressBar.Value = metrics.CpuUsage;
-            MemoryProgressBar.Value = metrics.MemoryUsage;
-            DiskProgressBar.Value = metrics.DiskUsage;
-            
-            // Update history for charts
-            _cpuHistory.Add(metrics.CpuUsage);
-            _memoryHistory.Add(metrics.MemoryUsage);
-            
-            // Keep only last 50 values for performance
-            if (_cpuHistory.Count > 50) _cpuHistory.RemoveAt(0);
-            if (_memoryHistory.Count > 50) _memoryHistory.RemoveAt(0);
-            
-            // Draw charts
-            DrawCpuChart();
-            DrawMemoryChart();
-            
-            // Update status
-            LastUpdatedText.Text = $"Last Updated: {DateTime.Now:HH:mm:ss}";
+            // Update UI elements - batch updates to improve performance
+            Dispatcher.BeginInvoke(new Action(() =>
+            {
+                CpuUsageText.Text = $"{metrics.CpuUsage:F1}%";
+                MemoryUsageText.Text = $"{metrics.MemoryUsage:F1}%";
+                DiskUsageText.Text = $"{metrics.DiskUsage:F1}%";
+                
+                CpuProgressBar.Value = metrics.CpuUsage;
+                MemoryProgressBar.Value = metrics.MemoryUsage;
+                DiskProgressBar.Value = metrics.DiskUsage;
+                
+                // Update history for charts
+                _cpuHistory.Add(metrics.CpuUsage);
+                _memoryHistory.Add(metrics.MemoryUsage);
+                
+                // Keep only last 50 values for performance
+                if (_cpuHistory.Count > 50) _cpuHistory.RemoveAt(0);
+                if (_memoryHistory.Count > 50) _memoryHistory.RemoveAt(0);
+                
+                // Draw charts only when necessary (less frequent than metrics updates)
+                if (_updateCounter % 2 == 0) // Draw charts every 2nd update (every 2 seconds)
+                {
+                    DrawCpuChart();
+                    DrawMemoryChart();
+                }
+                
+                // Update status
+                LastUpdatedText.Text = $"Last Updated: {DateTime.Now:HH:mm:ss}";
+                SystemStatusText.Text = metrics.CpuUsage > 80 || metrics.MemoryUsage > 85 ? 
+                    "System Status: High Load" : "System Status: Normal";
+                
+                _updateCounter++;
+            }));
         }
+        
+        private int _updateCounter = 0; // Counter for controlling chart update frequency
 
         private void DrawCpuChart()
         {
@@ -337,15 +370,41 @@ namespace EchoBooster
             intelligentOptimizeBtn.Click += IntelligentOptimizeBtn_Click;
             stackPanel.Children.Add(intelligentOptimizeBtn);
             
-            var cleanMemoryBtn = new Button { Content = "Clean System Memory", Background = new SolidColorBrush(Color.FromRgb(155, 89, 182)), Foreground = new SolidColorBrush(Colors.White), Padding = new Thickness(15, 10, 15, 10), Margin = new Thickness(0, 0, 0, 10) };
+            var advancedOptimizeBtn = new Button { Content = "Advanced Optimization", Background = new SolidColorBrush(Color.FromRgb(155, 89, 182)), Foreground = new SolidColorBrush(Colors.White), Padding = new Thickness(15, 10, 15, 10), Margin = new Thickness(0, 0, 0, 10) };
+            advancedOptimizeBtn.Click += AdvancedOptimizeBtn_Click;
+            stackPanel.Children.Add(advancedOptimizeBtn);
+            
+            var cleanMemoryBtn = new Button { Content = "Clean System Memory", Background = new SolidColorBrush(Color.FromRgb(241, 196, 15)), Foreground = new SolidColorBrush(Colors.White), Padding = new Thickness(15, 10, 15, 10), Margin = new Thickness(0, 0, 0, 10) };
             cleanMemoryBtn.Click += CleanMemoryBtn_Click;
             stackPanel.Children.Add(cleanMemoryBtn);
             
-            var reduceWorkingSetBtn = new Button { Content = "Reduce Working Set", Background = new SolidColorBrush(Color.FromRgb(241, 196, 15)), Foreground = new SolidColorBrush(Colors.White), Padding = new Thickness(15, 10, 15, 10), Margin = new Thickness(0, 0, 0, 10) };
+            var reduceWorkingSetBtn = new Button { Content = "Reduce Working Set", Background = new SolidColorBrush(Color.FromRgb(230, 126, 34)), Foreground = new SolidColorBrush(Colors.White), Padding = new Thickness(15, 10, 15, 10), Margin = new Thickness(0, 0, 0, 10) };
             reduceWorkingSetBtn.Click += ReduceWorkingSetBtn_Click;
             stackPanel.Children.Add(reduceWorkingSetBtn);
             
             ContentPanel.Children.Add(stackPanel);
+        }
+        
+        private async void AdvancedOptimizeBtn_Click(object sender, RoutedEventArgs e)
+        {
+            StatusText.Text = "Performing advanced optimization...";
+            var button = sender as Button;
+            if (button != null) button.IsEnabled = false;
+            
+            // Show progress in status bar
+            var progressTask = Task.Run(async () =>
+            {
+                for (int i = 0; i <= 100; i += 2)
+                {
+                    await Task.Delay(200);
+                    Dispatcher.Invoke(() => StatusText.Text = $"Performing advanced optimization... {i}%");
+                }
+            });
+            
+            var result = await Task.WhenAll(progressTask, _booster.PerformAdvancedOptimizationAsync());
+            
+            StatusText.Text = "Advanced optimization complete!";
+            if (button != null) button.IsEnabled = true;
         }
 
         private void LoadResourceManagerContent()
@@ -443,7 +502,17 @@ namespace EchoBooster
             var button = sender as Button;
             if (button != null) button.IsEnabled = false;
             
-            await Task.Run(() => _booster.OptimizeProcesses());
+            // Show progress in status bar
+            var progressTask = Task.Run(async () =>
+            {
+                for (int i = 0; i <= 100; i += 10)
+                {
+                    await Task.Delay(100);
+                    Dispatcher.Invoke(() => StatusText.Text = $"Optimizing system... {i}%");
+                }
+            });
+            
+            await Task.WhenAll(progressTask, Task.Run(() => _booster.OptimizeProcesses()));
             
             StatusText.Text = "System optimization complete!";
             if (button != null) button.IsEnabled = true;
@@ -455,7 +524,17 @@ namespace EchoBooster
             var button = sender as Button;
             if (button != null) button.IsEnabled = false;
             
-            await Task.Run(() => _booster.IntelligentOptimize());
+            // Show progress in status bar
+            var progressTask = Task.Run(async () =>
+            {
+                for (int i = 0; i <= 100; i += 5)
+                {
+                    await Task.Delay(150);
+                    Dispatcher.Invoke(() => StatusText.Text = $"Performing intelligent optimization... {i}%");
+                }
+            });
+            
+            await Task.WhenAll(progressTask, Task.Run(() => _booster.IntelligentOptimize()));
             
             StatusText.Text = "Intelligent optimization complete!";
             if (button != null) button.IsEnabled = true;
@@ -580,6 +659,7 @@ namespace EchoBooster
             _booster?.StopMonitoring();
             _updateTimer?.Stop();
             _updateManager?.Dispose();
+            _nodeIntegration?.Dispose();
             base.OnClosed(e);
         }
     }
