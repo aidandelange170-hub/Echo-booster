@@ -182,90 +182,17 @@ namespace EchoBooster
             LoadResourceManagerContent();
         }
 
+        private void SettingsBtn_Click(object sender, RoutedEventArgs e)
+        {
+            TitleText.Text = "Settings";
+            ContentPanel.Children.Clear();
+            LoadSettingsContent();
+        }
+
         private void LoadDashboardContent()
         {
-            // Rebuild the dashboard content
-            var title = new TextBlock { Text = "Dashboard", FontSize = 24, FontWeight = "Bold", Foreground = new SolidColorBrush(Color.FromRgb(44, 62, 80)) };
-            title.Margin = new Thickness(0, 0, 0, 20);
-            ContentPanel.Children.Add(title);
-            
-            var subtitle = new TextBlock { Text = "Welcome to EchoBooster - Your System Performance Optimizer", FontSize = 16, Foreground = new SolidColorBrush(Color.FromRgb(127, 140, 141)) };
-            subtitle.Margin = new Thickness(0, 0, 0, 30);
-            ContentPanel.Children.Add(subtitle);
-            
-            // System Metrics Cards
-            var metricsGrid = new Grid();
-            metricsGrid.Margin = new Thickness(0, 0, 0, 20);
-            metricsGrid.ColumnDefinitions.Add(new ColumnDefinition());
-            metricsGrid.ColumnDefinitions.Add(new ColumnDefinition());
-            metricsGrid.ColumnDefinitions.Add(new ColumnDefinition());
-            metricsGrid.ColumnDefinitions.Add(new ColumnDefinition());
-            
-            var cpuCard = CreateMetricCard("#3498db", "CPU", CpuUsageText.Text, CpuProgressBar);
-            var memoryCard = CreateMetricCard("#e74c3c", "Memory", MemoryUsageText.Text, MemoryProgressBar);
-            var diskCard = CreateMetricCard("#9b59b6", "Disk", DiskUsageText.Text, DiskProgressBar);
-            var networkCard = CreateMetricCard("#f39c12", "Network", NetworkStatusText.Text, NetworkProgressBar);
-            
-            Grid.SetColumn(cpuCard, 0);
-            Grid.SetColumn(memoryCard, 1);
-            Grid.SetColumn(diskCard, 2);
-            Grid.SetColumn(networkCard, 3);
-            
-            metricsGrid.Children.Add(cpuCard);
-            metricsGrid.Children.Add(memoryCard);
-            metricsGrid.Children.Add(diskCard);
-            metricsGrid.Children.Add(networkCard);
-            
-            ContentPanel.Children.Add(metricsGrid);
-            
-            // Charts section
-            var chartsGroup = new GroupBox { Header = "Performance Charts", Margin = new Thickness(0, 20, 0, 20) };
-            var chartsGrid = new Grid();
-            chartsGrid.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
-            chartsGrid.RowDefinitions.Add(new RowDefinition { Height = new GridLength(200) });
-            chartsGrid.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
-            chartsGrid.RowDefinitions.Add(new RowDefinition { Height = new GridLength(200) });
-            
-            var cpuChartLabel = new TextBlock { Text = "CPU Usage Over Time", FontWeight = "Bold", Margin = new Thickness(0, 0, 0, 10) };
-            var cpuChartBorder = new Border { Background = new SolidColorBrush(Color.FromRgb(236, 240, 241)), CornerRadius = new CornerRadius(5), Padding = new Thickness(10) };
-            cpuChartBorder.Child = CpuChartCanvas;
-            
-            var memoryChartLabel = new TextBlock { Text = "Memory Usage Over Time", FontWeight = "Bold", Margin = new Thickness(0, 20, 0, 10) };
-            var memoryChartBorder = new Border { Background = new SolidColorBrush(Color.FromRgb(236, 240, 241)), CornerRadius = new CornerRadius(5), Padding = new Thickness(10) };
-            memoryChartBorder.Child = MemoryChartCanvas;
-            
-            Grid.SetRow(cpuChartLabel, 0);
-            Grid.SetRow(cpuChartBorder, 1);
-            Grid.SetRow(memoryChartLabel, 2);
-            Grid.SetRow(memoryChartBorder, 3);
-            
-            chartsGrid.Children.Add(cpuChartLabel);
-            chartsGrid.Children.Add(cpuChartBorder);
-            chartsGrid.Children.Add(memoryChartLabel);
-            chartsGrid.Children.Add(memoryChartBorder);
-            
-            chartsGroup.Content = chartsGrid;
-            ContentPanel.Children.Add(chartsGroup);
-            
-            // Quick Actions
-            var actionsGroup = new GroupBox { Header = "Quick Actions", Margin = new Thickness(0, 0, 0, 20) };
-            var actionsPanel = new StackPanel { Orientation = Orientation.Horizontal, HorizontalAlignment = HorizontalAlignment.Center };
-            
-            var optimizeBtn = new Button { Content = "Optimize System", Background = new SolidColorBrush(Color.FromRgb(39, 174, 96)), Foreground = new SolidColorBrush(Colors.White), Padding = new Thickness(20, 10, 20, 10), Margin = new Thickness(0, 0, 10, 0) };
-            optimizeBtn.Click += OptimizeSystemBtn_Click;
-            
-            var refreshBtn = new Button { Content = "Refresh Data", Background = new SolidColorBrush(Color.FromRgb(52, 152, 219)), Foreground = new SolidColorBrush(Colors.White), Padding = new Thickness(20, 10, 20, 10), Margin = new Thickness(0, 0, 10, 0) };
-            refreshBtn.Click += RefreshBtn_Click;
-            
-            var stopBtn = new Button { Content = "Stop Monitoring", Background = new SolidColorBrush(Color.FromRgb(231, 76, 60)), Foreground = new SolidColorBrush(Colors.White), Padding = new Thickness(20, 10, 20, 10) };
-            stopBtn.Click += StopMonitoringBtn_Click;
-            
-            actionsPanel.Children.Add(optimizeBtn);
-            actionsPanel.Children.Add(refreshBtn);
-            actionsPanel.Children.Add(stopBtn);
-            
-            actionsGroup.Content = actionsPanel;
-            ContentPanel.Children.Add(actionsGroup);
+            var dashboardView = new DashboardView(_booster);
+            ContentPanel.Children.Add(dashboardView);
         }
 
         private Border CreateMetricCard(string color, string title, string value, ProgressBar progressBar)
@@ -382,11 +309,15 @@ namespace EchoBooster
             optimizeBtn.Click += OptimizeSystemBtn_Click;
             stackPanel.Children.Add(optimizeBtn);
             
-            var cleanMemoryBtn = new Button { Content = "Clean System Memory", Background = new SolidColorBrush(Color.FromRgb(52, 152, 219)), Foreground = new SolidColorBrush(Colors.White), Padding = new Thickness(15, 10, 15, 10), Margin = new Thickness(0, 0, 0, 10) };
+            var intelligentOptimizeBtn = new Button { Content = "Intelligent Optimization", Background = new SolidColorBrush(Color.FromRgb(52, 152, 219)), Foreground = new SolidColorBrush(Colors.White), Padding = new Thickness(15, 10, 15, 10), Margin = new Thickness(0, 0, 0, 10) };
+            intelligentOptimizeBtn.Click += IntelligentOptimizeBtn_Click;
+            stackPanel.Children.Add(intelligentOptimizeBtn);
+            
+            var cleanMemoryBtn = new Button { Content = "Clean System Memory", Background = new SolidColorBrush(Color.FromRgb(155, 89, 182)), Foreground = new SolidColorBrush(Colors.White), Padding = new Thickness(15, 10, 15, 10), Margin = new Thickness(0, 0, 0, 10) };
             cleanMemoryBtn.Click += CleanMemoryBtn_Click;
             stackPanel.Children.Add(cleanMemoryBtn);
             
-            var reduceWorkingSetBtn = new Button { Content = "Reduce Working Set", Background = new SolidColorBrush(Color.FromRgb(155, 89, 182)), Foreground = new SolidColorBrush(Colors.White), Padding = new Thickness(15, 10, 15, 10), Margin = new Thickness(0, 0, 0, 10) };
+            var reduceWorkingSetBtn = new Button { Content = "Reduce Working Set", Background = new SolidColorBrush(Color.FromRgb(241, 196, 15)), Foreground = new SolidColorBrush(Colors.White), Padding = new Thickness(15, 10, 15, 10), Margin = new Thickness(0, 0, 0, 10) };
             reduceWorkingSetBtn.Click += ReduceWorkingSetBtn_Click;
             stackPanel.Children.Add(reduceWorkingSetBtn);
             
@@ -457,6 +388,12 @@ namespace EchoBooster
             ContentPanel.Children.Add(activeAppGroup);
         }
 
+        private void LoadSettingsContent()
+        {
+            var settingsView = new SettingsView();
+            ContentPanel.Children.Add(settingsView);
+        }
+
         private void AddMetricRow(Grid grid, int row, string label, string value)
         {
             var labelBlock = new TextBlock { Text = label, FontSize = 14, FontWeight = "SemiBold", Foreground = new SolidColorBrush(Color.FromRgb(44, 62, 80)) };
@@ -486,6 +423,35 @@ namespace EchoBooster
             
             StatusText.Text = "System optimization complete!";
             if (button != null) button.IsEnabled = true;
+        }
+
+        private async void IntelligentOptimizeBtn_Click(object sender, RoutedEventArgs e)
+        {
+            StatusText.Text = "Performing intelligent optimization...";
+            var button = sender as Button;
+            if (button != null) button.IsEnabled = false;
+            
+            await Task.Run(() => _booster.IntelligentOptimize());
+            
+            StatusText.Text = "Intelligent optimization complete!";
+            if (button != null) button.IsEnabled = true;
+        }
+
+        // Methods that can be called from DashboardView
+        public async void OptimizeSystemFromDashboard()
+        {
+            StatusText.Text = "Optimizing system...";
+            await Task.Run(() => _booster.OptimizeProcesses());
+            StatusText.Text = "System optimization complete!";
+            UpdateSystemMetrics(); // Refresh metrics after optimization
+        }
+
+        public async void IntelligentOptimizeFromDashboard()
+        {
+            StatusText.Text = "Performing intelligent optimization...";
+            await Task.Run(() => _booster.IntelligentOptimize());
+            StatusText.Text = "Intelligent optimization complete!";
+            UpdateSystemMetrics(); // Refresh metrics after optimization
         }
 
         private void CleanMemoryBtn_Click(object sender, RoutedEventArgs e)

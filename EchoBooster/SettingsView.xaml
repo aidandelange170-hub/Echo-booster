@@ -1,0 +1,88 @@
+<UserControl x:Class="EchoBooster.SettingsView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:EchoBooster"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="800">
+    <ScrollViewer>
+        <StackPanel Margin="20">
+            <TextBlock Text="Settings" FontSize="28" FontWeight="Bold" 
+                       Foreground="#2c3e50" Margin="0,0,0,20"/>
+            <TextBlock Text="Configure your system optimization preferences" FontSize="16" 
+                       Foreground="#7f8c8d" Margin="0,0,0,30"/>
+
+            <!-- Monitoring Settings -->
+            <GroupBox Header="Monitoring Settings" Margin="0,0,0,20" Padding="15">
+                <StackPanel>
+                    <CheckBox x:Name="CpuMonitoringCheckBox" Content="Enable CPU Monitoring" 
+                              IsChecked="True" Margin="0,0,0,10"/>
+                    <CheckBox x:Name="MemoryMonitoringCheckBox" Content="Enable Memory Monitoring" 
+                              IsChecked="True" Margin="0,0,0,10"/>
+                    <CheckBox x:Name="DiskMonitoringCheckBox" Content="Enable Disk Monitoring" 
+                              IsChecked="True" Margin="0,0,0,10"/>
+                    <CheckBox x:Name="NetworkMonitoringCheckBox" Content="Enable Network Monitoring" 
+                              IsChecked="True" Margin="0,0,0,10"/>
+                    
+                    <TextBlock Text="Update Interval (seconds):" Margin="0,15,0,5"/>
+                    <Slider x:Name="UpdateIntervalSlider" Minimum="1" Maximum="60" Value="2" 
+                            Margin="0,0,0,10" TickFrequency="1" IsSnapToTickEnabled="True"/>
+                    <TextBlock x:Name="UpdateIntervalText" Text="2 seconds" HorizontalAlignment="Center" 
+                               Foreground="#7f8c8d"/>
+                </StackPanel>
+            </GroupBox>
+
+            <!-- Optimization Settings -->
+            <GroupBox Header="Optimization Settings" Margin="0,0,0,20" Padding="15">
+                <StackPanel>
+                    <CheckBox x:Name="AutoOptimizeCheckBox" Content="Enable Auto-Optimization" 
+                              IsChecked="False" Margin="0,0,0,10"/>
+                    <TextBlock Text="Auto-Optimization Interval (minutes):" Margin="0,0,0,5"/>
+                    <Slider x:Name="AutoOptimizeIntervalSlider" Minimum="5" Maximum="120" Value="30" 
+                            Margin="0,0,0,10" TickFrequency="5" IsSnapToTickEnabled="True"/>
+                    <TextBlock x:Name="AutoOptimizeIntervalText" Text="30 minutes" HorizontalAlignment="Center" 
+                               Foreground="#7f8c8d"/>
+                    
+                    <TextBlock Text="Optimization Level:" Margin="0,15,0,10"/>
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                        <RadioButton x:Name="LowOptimizationRadio" Content="Low" GroupName="OptimizationLevel" 
+                                     Margin="0,0,20,0" IsChecked="True"/>
+                        <RadioButton x:Name="MediumOptimizationRadio" Content="Medium" GroupName="OptimizationLevel" 
+                                     Margin="0,0,20,0"/>
+                        <RadioButton x:Name="HighOptimizationRadio" Content="High" GroupName="OptimizationLevel"/>
+                    </StackPanel>
+                </StackPanel>
+            </GroupBox>
+
+            <!-- Theme Settings -->
+            <GroupBox Header="Theme Settings" Margin="0,0,0,20" Padding="15">
+                <StackPanel>
+                    <TextBlock Text="Select Theme:" Margin="0,0,0,10"/>
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                        <RadioButton x:Name="LightThemeRadio" Content="Light" GroupName="Theme" 
+                                     Margin="0,0,20,0" IsChecked="True"/>
+                        <RadioButton x:Name="DarkThemeRadio" Content="Dark" GroupName="Theme" 
+                                     Margin="0,0,20,0"/>
+                        <RadioButton x:Name="SystemThemeRadio" Content="System" GroupName="Theme"/>
+                    </StackPanel>
+                </StackPanel>
+            </GroupBox>
+
+            <!-- Actions -->
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,20,0,0">
+                <Button x:Name="SaveSettingsBtn" Content="Save Settings" 
+                        Background="#27ae60" Foreground="White" 
+                        Padding="20,10" Margin="0,0,10,0" 
+                        Click="SaveSettingsBtn_Click"/>
+                <Button x:Name="ResetSettingsBtn" Content="Reset to Defaults" 
+                        Background="#f39c12" Foreground="White" 
+                        Padding="20,10" Margin="0,0,10,0" 
+                        Click="ResetSettingsBtn_Click"/>
+                <Button x:Name="ApplySettingsBtn" Content="Apply" 
+                        Background="#3498db" Foreground="White" 
+                        Padding="20,10" Click="ApplySettingsBtn_Click"/>
+            </StackPanel>
+        </StackPanel>
+    </ScrollViewer>
+</UserControl>
