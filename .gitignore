@@ -1,1 +1,1 @@
-(empty)
+Nothing should be ignored based on the provided file changes. The added files are all source code files (.py, .js, .sh, .bat, .ps1, .cs, .csproj) and documentation files (.md), which should be tracked in version control.
